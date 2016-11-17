@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+ext.launcherMain = 'org.kneelawk.hellojavacv.HelloJavaCVLauncher'
+
+sourceSets { launcher }
+
+repositories { jcenter() }
+
+configurations {
+	all*.exclude group: 'org.bytedeco', module: 'javacpp-presets'
+}
+
+dependencies {
+	compile 'org.bytedeco:javacv:1.2'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:linux-armhf'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:linux-ppc64le'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:linux-x86'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:linux-x86_64'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:macosx-x86_64'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:windows-x86'
+	compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:windows-x86_64'
+	compile 'org.bytedeco.javacpp-presets:ffmpeg:3.1.2-1.2:linux-x86'
+	compile 'org.bytedeco.javacpp-presets:ffmpeg:3.1.2-1.2:linux-x86_64'
+	compile 'org.bytedeco.javacpp-presets:ffmpeg:3.1.2-1.2:macosx-x86_64'
+	compile 'org.bytedeco.javacpp-presets:ffmpeg:3.1.2-1.2:windows-x86'
+	compile 'org.bytedeco.javacpp-presets:ffmpeg:3.1.2-1.2:windows-x86_64'
+}
+
+// builds the launch jar
+task launcherJar(type: Jar, dependsOn: [jar, launcherClasses]) {
+	manifest { attributes 'Main-Class': launcherMain }
+	baseName "${project.name}-all"
+	from(configurations.compile) { into 'libs' }
+	from('dependencies/natives') { into 'natives' }
+	from(jar.outputs.files) { into 'app' }
+	from(sourceSets.launcher.output)
+
+	group 'Build'
+	description 'Creates a jar with all dependencies included.'
+}
+
+assemble.dependsOn launcherJar
