@@ -1,6 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+srouceCompatibility = 1.8
+version = '0.0.1'
+
 ext.launcherMain = 'org.kneelawk.hellojavacv.HelloJavaCVLauncher'
 
 sourceSets { launcher }
